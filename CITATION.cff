@@ -120,5 +120,6 @@ keywords:
   - FastAPI
 license: MIT
 repository-code: https://github.com/OneFineStarstuff/AGI-Pipeline
-date-released: 2024-12-16
+date-released: '2024-12-17'
 version: 1.0.0
+doi: 10.5281/zenodo.14504697
