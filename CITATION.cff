@@ -8,7 +8,6 @@ type: software
 abstract: >-
   Abstract:
 
-
   The AGI (Artificial General Intelligence) Pipeline is a comprehensive and
   modular software framework designed to integrate various AI capabilities,
   including Natural Language Processing (NLP), Computer Vision (CV), Multi-Modal
@@ -18,7 +17,6 @@ abstract: >-
 
 
   Description:
-
 
   The AGI Pipeline is built to facilitate seamless integration and interaction
   between different AI modules, enabling the development of sophisticated AI
