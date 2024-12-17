@@ -6,7 +6,7 @@ cff-version: 1.2.0
 message: If you use this software, please cite it using the metadata from this file.
 type: software
 abstract: >-
-  ### Abstract
+  Abstract:
 
 
   The AGI (Artificial General Intelligence) Pipeline is a comprehensive and
@@ -17,7 +17,7 @@ abstract: >-
   and scalable solution for diverse AI tasks.
 
 
-  ### Description
+  Description:
 
 
   The AGI Pipeline is built to facilitate seamless integration and interaction
@@ -25,41 +25,41 @@ abstract: >-
   applications. Key features of the pipeline include:
 
 
-  1. **Natural Language Processing (NLP)**:
+  1. Natural Language Processing (NLP):
      - Utilizes the BART (Bidirectional and Auto-Regressive Transformers) model for text summarization and other NLP tasks.
      - Provides efficient and accurate text processing capabilities.
 
-  2. **Computer Vision (CV)**:
+  2. Computer Vision (CV):
      - Employs the ResNet50 model for image classification, leveraging pre-trained weights from ImageNet.
      - Supports advanced data augmentation techniques using the Albumentations library to enhance model robustness.
 
-  3. **Multi-Modal Processing**:
+  3. Multi-Modal Processing:
      - Integrates the CLIP (Contrastive Language–Image Pretraining) model to process and understand text and image inputs simultaneously.
      - Enables tasks such as image captioning and scene understanding.
 
-  4. **Reinforcement Learning (RL)**:
+  4. Reinforcement Learning (RL):
      - Implements the PPO (Proximal Policy Optimization) algorithm from the Stable-Baselines3 library for training RL agents.
      - Includes a custom environment for RL tasks, allowing for flexible and dynamic training scenarios.
 
-  5. **Real-Time Video Processing**:
+  5. Real-Time Video Processing:
      - Supports real-time video processing using OpenCV, enabling live video feed analysis and processing.
      - Provides a robust framework for handling real-time data streams.
 
-  6. **Voice and Speech Integration**:
+  6. Voice and Speech Integration:
      - Incorporates speech-to-text and text-to-speech capabilities using libraries like Google Speech Recognition and pyttsx3.
      - Facilitates voice-based interactions and processing.
 
-  7. **Interactive Visualization**:
+  7. Interactive Visualization:
      - Utilizes Plotly for dynamic and interactive data visualization, creating insightful visual representations of data and model performance.
 
-  8. **Deployment and Scalability**:
+  8. Deployment and Scalability:
      - Designed for easy deployment to cloud platforms such as AWS, GCP, and Heroku.
      - Ensures scalability and performance optimization for handling large-scale AI tasks.
 
-  9. **Comprehensive Testing and Validation**:
+  9. Comprehensive Testing and Validation:
      - Implements unit tests and integration tests using PyTest to ensure the robustness and reliability of the pipeline.
 
-  10. **User Interface**:
+  10. User Interface:
       - Provides a web-based user interface using frameworks like Flask and React for easy interaction with the pipeline.
 
   The AGI Pipeline is a versatile and powerful tool for researchers, developers,
@@ -67,37 +67,37 @@ abstract: >-
   ease and efficiency.
 
 
-  ### Application Category
+  Application Category:
 
 
-  1. **Artificial Intelligence (AI)**:
+  1. Artificial Intelligence (AI):
      - The software integrates various AI models and techniques, making it a comprehensive AI solution.
 
-  2. **Machine Learning (ML)**:
+  2. Machine Learning (ML):
      - The pipeline includes machine learning models for NLP, CV, and RL tasks.
 
-  3. **Data Science**:
+  3. Data Science:
      - The software provides tools for data processing, analysis, and visualization.
 
-  4. **Computer Vision**:
+  4. Computer Vision:
      - The pipeline includes image classification and real-time video processing capabilities.
 
-  5. **Natural Language Processing (NLP)**:
+  5. Natural Language Processing (NLP):
      - The software offers text summarization and other NLP functionalities.
 
-  6. **Multi-Modal Processing**:
+  6. Multi-Modal Processing:
      - The pipeline integrates text and image processing for enhanced multi-modal understanding.
 
-  7. **Reinforcement Learning (RL)**:
+  7. Reinforcement Learning (RL):
      - The software includes reinforcement learning models and custom environments for training RL agents.
 
-  8. **Voice and Speech Processing**:
+  8. Voice and Speech Processing:
      - The pipeline supports speech-to-text and text-to-speech capabilities.
 
-  9. **Software Development**:
+  9. Software Development:
      - The software provides a framework for developing and deploying AI applications.
 
-  10. **Cloud Computing**:
+  10. Cloud Computing:
       - The pipeline is designed for deployment on cloud platforms, ensuring scalability and performance optimization.
 keywords:
   - Artificial General Intelligence (AGI)
