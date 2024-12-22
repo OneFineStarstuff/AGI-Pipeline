@@ -1,111 +1,63 @@
-AGI Pipeline
+# AGI Pipeline
 
-Overview
+## Overview
 
-The AGI (Artificial General Intelligence) Pipeline is a comprehensive and modular software framework designed to integrate various AI capabilities, including Natural Language Processing (NLP), Computer Vision (CV), Multi-Modal Processing, Reinforcement Learning (RL), and Real-Time Video Processing. This pipeline leverages state-of-the-art models and techniques to provide a robust and scalable solution for diverse AI tasks.
+A comprehensive AGI pipeline integrating NLP, Computer Vision, and Speech Processing using pre-trained models.
 
-Features
+## Features
+- Text generation with T5
+- Object detection with YOLO
+- Speech-to-text with Whisper
+- Text-to-speech with Pyttsx3
 
-- Natural Language Processing (NLP): Utilizes the BART model for text summarization and other NLP tasks.
-- Computer Vision (CV): Employs the ResNet50 model for image classification and advanced data augmentation techniques.
-- Multi-Modal Processing: Integrates the CLIP model to process and understand text and image inputs simultaneously.
-- Reinforcement Learning (RL): Implements the PPO algorithm for training RL agents with a custom environment.
-- Real-Time Video Processing: Supports real-time video processing using OpenCV.
-- Voice and Speech Integration: Incorporates speech-to-text and text-to-speech capabilities.
-- Interactive Visualization: Utilizes Plotly for dynamic and interactive data visualization.
-- Deployment and Scalability: Designed for easy deployment to cloud platforms such as AWS, GCP, and Heroku.
-- Comprehensive Testing and Validation: Implements unit tests and integration tests using PyTest.
-- User Interface: Provides a web-based user interface using Flask and React.
+## Installation
 
-Installation
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/yourusername/agi-pipeline.git
+    ```
+    
+2. **Navigate to the project directory**:
+    ```bash
+    cd agi-pipeline
+    ```
+    
+3. **Create and activate a virtual environment**:
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+    
+4. **Install dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-Prerequisites
+## Usage
 
-- Python 3.8 or higher
-- Docker (for containerization)
-- Git (for version control)
+1. **Run the FastAPI application**:
+    ```bash
+    uvicorn main:app --reload
+    ```
+    
+2. **Access the API** at `http://127.0.0.1:8000`.
 
-Clone the Repository
+## Using Docker
 
-```bash
-git clone https://github.com/your-username/AGI-Pipeline.git
-cd AGI-Pipeline
-```
+1. **Build the Docker image**:
+    ```bash
+    docker build -t agi-pipeline:1.0.1 .
+    ```
 
-Install Dependencies
+2. **Run the Docker container**:
+    ```bash
+    docker run -p 8000:8000 agi-pipeline:1.0.1
+    ```
 
-```bash
-pip install -r requirements.txt
-```
+## Contributing
 
-Running the Application
+Feel free to open issues or submit pull requests!
 
-Using Docker
+## License
 
-1. Build the Docker Image:
-
-```bash
-docker build -t agi-pipeline .
-```
-
-2. Run the Docker Image:
-
-```bash
-docker run -p 8000:8000 agi-pipeline
-```
-
-Without Docker
-
-```bash
-uvicorn app:app --host 0.0.0.0 --port 8000
-```
-
-Usage
-
-API Endpoints
-
-- /process/: Processes text and video inputs for multi-modal integration.
-- /nlp/: Processes text for summarization.
-- /cv/: Processes images for classification.
-- /real-time-video/: Starts real-time video processing.
-- /speech-to-text/: Converts speech to text.
-- /text-to-speech/: Converts text to speech.
-- /secure-endpoint/: A secure endpoint demonstrating token-based authentication.
-
-Example Requests
-
-Text Summarization
-
-```bash
-curl -X POST "http://localhost:8000/nlp/" -H "Content-Type: application/json" -d '{"text": "Summarize this text."}'
-```
-
-Image Classification
-
-```bash
-curl -X POST "http://localhost:8000/cv/" -F "image=@path_to_image.jpg"
-```
-
-Multi-Modal Processing
-
-```bash
-curl -X POST "http://localhost:8000/process/" -F "text=Describe this image" -F "video=@path_to_video.mp4"
-```
-
-Contributing
-
-We welcome contributions to the AGI Pipeline project! Please follow these steps to contribute:
-
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -m 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch`).
-5. Open a pull request.
-
-License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-Acknowledgements
-
-We would like to thank the developers and contributors of the libraries and frameworks used in this project, including Hugging Face, PyTorch, OpenCV, FastAPI, and many others.
+This project is licensed under the MIT License - see the LICENSE file for details.
