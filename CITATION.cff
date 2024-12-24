@@ -1,13 +1,15 @@
+cff-version: 1.2.0
+message: If you use this software, please cite it using the metadata from this file.
 title: AGI-Pipeline
+version: 1.0.0
+date-released: '2024-12-17'
+license: MIT
+repository-code: https://github.com/OneFineStarstuff/AGI-Pipeline
+doi: 10.5281/zenodo.14504697
 authors:
   - given-names: Kyaw T.
     family-names: Tun
-cff-version: 1.2.0
-message: If you use this software, please cite it using the metadata from this file.
-type: software
 abstract: >-
-  Abstract:
-
   The AGI (Artificial General Intelligence) Pipeline is a comprehensive and
   modular software framework designed to integrate various AI capabilities,
   including Natural Language Processing (NLP), Computer Vision (CV), Multi-Modal
@@ -15,14 +17,10 @@ abstract: >-
   pipeline leverages state-of-the-art models and techniques to provide a robust
   and scalable solution for diverse AI tasks.
 
-
-  Description:
-
   The AGI Pipeline is built to facilitate seamless integration and interaction
   between different AI modules, enabling the development of sophisticated AI
   applications. Key features of the pipeline include:
-
-
+  
   1. Natural Language Processing (NLP):
      - Utilizes the BART (Bidirectional and Auto-Regressive Transformers) model for text summarization and other NLP tasks.
      - Provides efficient and accurate text processing capabilities.
@@ -64,39 +62,6 @@ abstract: >-
   and AI enthusiasts, enabling the creation of advanced AI applications with
   ease and efficiency.
 
-
-  Application Category:
-
-
-  1. Artificial Intelligence (AI):
-     - The software integrates various AI models and techniques, making it a comprehensive AI solution.
-
-  2. Machine Learning (ML):
-     - The pipeline includes machine learning models for NLP, CV, and RL tasks.
-
-  3. Data Science:
-     - The software provides tools for data processing, analysis, and visualization.
-
-  4. Computer Vision:
-     - The pipeline includes image classification and real-time video processing capabilities.
-
-  5. Natural Language Processing (NLP):
-     - The software offers text summarization and other NLP functionalities.
-
-  6. Multi-Modal Processing:
-     - The pipeline integrates text and image processing for enhanced multi-modal understanding.
-
-  7. Reinforcement Learning (RL):
-     - The software includes reinforcement learning models and custom environments for training RL agents.
-
-  8. Voice and Speech Processing:
-     - The pipeline supports speech-to-text and text-to-speech capabilities.
-
-  9. Software Development:
-     - The software provides a framework for developing and deploying AI applications.
-
-  10. Cloud Computing:
-      - The pipeline is designed for deployment on cloud platforms, ensuring scalability and performance optimization.
 keywords:
   - Artificial General Intelligence (AGI)
   - Natural Language Processing (NLP)
@@ -118,8 +83,3 @@ keywords:
   - AI Applications
   - Docker
   - FastAPI
-license: MIT
-repository-code: https://github.com/OneFineStarstuff/AGI-Pipeline
-date-released: '2024-12-17'
-version: 1.0.0
-doi: 10.5281/zenodo.14504697
