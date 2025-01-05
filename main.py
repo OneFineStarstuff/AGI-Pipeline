@@ -1,39 +1,35 @@
-# === Imports ===
 import os
 import asyncio
-import time
-from typing import List
 import torch
-from transformers import T5Tokenizer, T5ForConditionalGeneration
+from typing import List
 from PIL import Image
-from fastapi import FastAPI, UploadFile, Depends, HTTPException, Request
+from fastapi import FastAPI, UploadFile, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, SecretStr
-import whisper
-from ultralytics import YOLO
 import pyttsx3
 from loguru import logger
 import io
-import nest_asyncio
 import uvicorn
+import nest_asyncio
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+from ultralytics import YOLO
+import whisper
 
-# === Logging Setup ===
+# === Configuration and Logging Setup ===
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 logger.add("pipeline_{time}.log", rotation="1 MB", level="DEBUG", enqueue=True, backtrace=True, diagnose=True)
 logger.info("Application startup")
 
-# === Security Enhancement: Environment Variable for Secure Token ===
+# === Security Setup ===
 SECURE_TOKEN = SecretStr(os.getenv("SECURE_TOKEN", "YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q"))
-
-# === OAuth2PasswordBearer for Authentication ===
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-# === Authentication Function ===
 def authenticate_user(token: str = Depends(oauth2_scheme)):
     if token != SECURE_TOKEN.get_secret_value():
         logger.warning("Authentication failed.")
         raise HTTPException(status_code=401, detail="Invalid token")
 
-# === Request and Response Models (Pydantic) ===
+# === Pydantic Models ===
 class TextRequest(BaseModel):
     text: str
 
@@ -52,8 +48,9 @@ class NLPModule:
         if not prompt.strip():
             raise ValueError("Prompt cannot be empty.")
         logger.debug(f"Generating text for prompt: {prompt}")
-        inputs = self.tokenizer(prompt, return_tensors="pt")
-        outputs = self.model.generate(inputs["input_ids"], max_length=100)
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
+        with torch.no_grad():
+            outputs = self.model.generate(inputs["input_ids"], max_length=100)
         response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
         logger.info(f"Generated response: {response}")
         return response
@@ -61,8 +58,7 @@ class NLPModule:
 # === CV Module (YOLOv8 for Object Detection) ===
 class CVModule:
     def __init__(self):
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = YOLO('yolov8n.pt').to(self.device)
+        self.model = YOLO('yolov8n.pt').to(device)
         logger.info("CV model loaded successfully.")
 
     def detect_objects(self, image: Image.Image) -> str:
@@ -149,6 +145,4 @@ async def text_to_speech(request: TextRequest):
 # === Run the Application with HTTPS (uvicorn) ===
 if __name__ == "__main__":
     nest_asyncio.apply()
-    config = uvicorn.Config(app, host="0.0.0.0", port=8000)
-    server = uvicorn.Server(config)
-    asyncio.run(server.serve())
+    uvicorn.run(app, host="0.0.0.0", port=8000)
