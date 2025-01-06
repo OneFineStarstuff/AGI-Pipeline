@@ -1,16 +1,18 @@
 import os
-import asyncio
 import torch
+import asyncio
 from typing import List
 from PIL import Image
 from fastapi import FastAPI, UploadFile, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel
+import jwt
 import pyttsx3
 from loguru import logger
 import io
 import uvicorn
-import nest_asyncio
+import signal
+import sys
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from ultralytics import YOLO
 import whisper
@@ -21,13 +23,22 @@ logger.add("pipeline_{time}.log", rotation="1 MB", level="DEBUG", enqueue=True, 
 logger.info("Application startup")
 
 # === Security Setup ===
-SECURE_TOKEN = SecretStr(os.getenv("SECURE_TOKEN", "YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q"))
+SECRET_KEY = os.getenv("SECRET_KEY", "YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q")
+ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+def create_access_token(data: dict):
+    to_encode = data.copy()
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
 def authenticate_user(token: str = Depends(oauth2_scheme)):
-    if token != SECURE_TOKEN.get_secret_value():
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.PyJWTError:
         logger.warning("Authentication failed.")
         raise HTTPException(status_code=401, detail="Invalid token")
+    return payload
 
 # === Pydantic Models ===
 class TextRequest(BaseModel):
@@ -111,6 +122,14 @@ app = FastAPI()
 
 pipeline = EnhancedAGIPipeline()
 
+# === Graceful Shutdown ===
+def shutdown_signal_handler(sig, frame):
+    print('Shutting down gracefully...')
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, shutdown_signal_handler)
+signal.signal(signal.SIGTERM, shutdown_signal_handler)
+
 # === Endpoints ===
 @app.post("/process-nlp/", response_model=TextResponse, dependencies=[Depends(authenticate_user)])
 async def process_nlp(request: TextRequest):
@@ -125,11 +144,8 @@ async def process_cv_detection(file: UploadFile):
 
 @app.post("/batch-cv-detection/", dependencies=[Depends(authenticate_user)])
 async def batch_cv_detection(files: List[UploadFile]):
-    responses = []
-    for file in files:
-        image = Image.open(io.BytesIO(await file.read()))
-        response = await pipeline.process_cv(image)
-        responses.append(response)
+    tasks = [pipeline.process_cv(Image.open(io.BytesIO(await file.read()))) for file in files]
+    responses = await asyncio.gather(*tasks)
     return {"batch_detections": responses}
 
 @app.post("/speech-to-text/", response_model=TextResponse, dependencies=[Depends(authenticate_user)])
@@ -142,7 +158,6 @@ async def text_to_speech(request: TextRequest):
     await pipeline.process_text_to_speech(request.text)
     return {"response": "Speech synthesis complete."}
 
-# === Run the Application with HTTPS (uvicorn) ===
+# === Run the Application ===
 if __name__ == "__main__":
-    nest_asyncio.apply()
     uvicorn.run(app, host="0.0.0.0", port=8000)
