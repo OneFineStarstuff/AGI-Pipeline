@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Form</title>
+</head>
+<body>
+    <h1>Configuration Form</h1>
+    <form action="/save-config" method="post">
+        <h2>Logging Configuration</h2>
+        <label for="log_file">Log File:</label>
+        <input type="text" id="log_file" name="log_file" value="pipeline_{time}.log"><br><br>
+        <label for="rotation">Rotation:</label>
+        <input type="text" id="rotation" name="rotation" value="1 MB"><br><br>
+        <label for="level">Level:</label>
+        <input type="text" id="level" name="level" value="DEBUG"><br><br>
+        <label for="enqueue">Enqueue:</label>
+        <input type="checkbox" id="enqueue" name="enqueue" checked><br><br>
+        <label for="backtrace">Backtrace:</label>
+        <input type="checkbox" id="backtrace" name="backtrace" checked><br><br>
+        <label for="diagnose">Diagnose:</label>
+        <input type="checkbox" id="diagnose" name="diagnose" checked><br><br>
+
+        <h2>Security Configuration</h2>
+        <label for="secret_key">Secret Key:</label>
+        <input type="text" id="secret_key" name="secret_key" value="YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q"><br><br>
+        <label for="algorithm">Algorithm:</label>
+        <input type="text" id="algorithm" name="algorithm" value="HS256"><br><br>
+
+        <h2>NLP Model Configuration</h2>
+        <label for="model_name">Model Name:</label>
+        <input type="text" id="model_name" name="model_name" value="google/flan-t5-small"><br><br>
+
+        <h2>CV Model Configuration</h2>
+        <label for="model_path">Model Path:</label>
+        <input type="text" id="model_path" name="model_path" value="yolov8n.pt"><br><br>
+
+        <h2>Speech Processor Configuration</h2>
+        <label for="whisper_model">Whisper Model:</label>
+        <input type="text" id="whisper_model" name="whisper_model" value="base"><br><br>
+
+        <button type="submit">Save Configuration</button>
+    </form>
+</body>
+</html>
