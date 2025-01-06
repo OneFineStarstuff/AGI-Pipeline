@@ -1,0 +1,23 @@
+{
+    "logging": {
+        "log_file": "pipeline_{time}.log",
+        "rotation": "1 MB",
+        "level": "DEBUG",
+        "enqueue": true,
+        "backtrace": true,
+        "diagnose": true
+    },
+    "security": {
+        "secret_key": "YvZz9Hni0hWJPh_UWW4dQYf9rhIe9nNYcC5ZQTTZz0Q",
+        "algorithm": "HS256"
+    },
+    "nlp_model": {
+        "model_name": "google/flan-t5-small"
+    },
+    "cv_model": {
+        "model_path": "yolov8n.pt"
+    },
+    "speech_processor": {
+        "whisper_model": "base"
+    }
+}
