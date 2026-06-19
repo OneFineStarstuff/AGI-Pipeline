@@ -6,11 +6,12 @@ import io
 @pytest.mark.asyncio
 async def test_pipeline_nlp():
     pipeline = EnhancedAGIPipeline()
-    result = await pipeline.process_nlp("Hello")
+    result = await pipeline.process_nlp("I want to buy some retail items")
     assert "response" in result
     assert "zk_proof" in result
     assert "cae_metadata" in result
     assert result["zk_proof"].status == "VERIFIED"
+    assert "Expert_Retail" in result["cae_metadata"].interpretability_summary
 
 @pytest.mark.asyncio
 async def test_pipeline_cv():
@@ -22,7 +23,6 @@ async def test_pipeline_cv():
 
 @pytest.mark.asyncio
 async def test_pipeline_stt():
-    # This requires test.wav to exist from previous steps
     pipeline = EnhancedAGIPipeline()
     from fastapi import UploadFile
     with open("test.wav", "rb") as f:

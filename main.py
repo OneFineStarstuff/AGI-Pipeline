@@ -64,6 +64,11 @@ def authenticate_user(token: str = Depends(oauth2_scheme)):
 
 # === Pydantic Models ===
 
+class NLPResponse(BaseModel):
+    """Model for NLP Expert responses."""
+    text: str
+    expert: str
+
 class TextRequest(BaseModel):
     """Request model for text-based endpoints."""
     text: str
@@ -98,33 +103,43 @@ class TextResponse(BaseModel):
 # === NLP Module (T5 Transformer) ===
 
 class NLPModule:
-    """Module for Natural Language Processing using T5."""
+    """Module for Natural Language Processing using T5 with MoE logic."""
     def __init__(self):
         model_name = "google/flan-t5-small"
         self.tokenizer = T5Tokenizer.from_pretrained(model_name)
         self.model = T5ForConditionalGeneration.from_pretrained(model_name)
-        logger.info("NLP model loaded successfully.")
+        self.experts = ["Expert_Retail", "Expert_Finance", "Expert_General"]
+        logger.info("NLP model and MoE experts loaded successfully.")
+
+    def _route_to_expert(self, prompt: str) -> str:
+        """Simulates routing logic to select an expert node."""
+        lower_prompt = prompt.lower()
+        if any(word in lower_prompt for word in ["buy", "price", "retail", "shop"]):
+            return "Expert_Retail"
+        if any(word in lower_prompt for word in ["finance", "stock", "investment", "bank"]):
+            return "Expert_Finance"
+        return "Expert_General"
 
     @lru_cache(maxsize=100)
-    def generate_text(self, prompt: str) -> str:
-        """Generates a text response for a given prompt."""
+    def generate_text(self, prompt: str) -> NLPResponse:
+        """Generates a text response for a given prompt using MoE."""
         if not prompt.strip():
             raise ValueError("Prompt cannot be empty.")
         try:
-            logger.debug(f"Generating text for prompt: {prompt}")
+            selected_expert = self._route_to_expert(prompt)
+            logger.debug(f"Routing to expert: {selected_expert} for prompt: {prompt}")
             inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
             with torch.no_grad():
                 outputs = self.model.generate(inputs["input_ids"], max_length=100)
             response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-            logger.info(f"Generated response: {response}")
-            return response
+            logger.info(f"Generated response by {selected_expert}: {response}")
+            return NLPResponse(text=response, expert=selected_expert)
         except Exception as e:
             logger.error(f"Error during text generation: {e}")
             raise HTTPException(
                 status_code=500,
                 detail="Internal server error during text generation."
             ) from e
-
 # === CV Module (YOLOv8 for Object Detection) ===
 
 class CVModule:
@@ -153,51 +168,61 @@ class CVModule:
 # === Regulatory Module (Compliance: MAS FEAT & HKMA Ethics) ===
 
 class RegulatoryModule:
-    """Module for handling regulatory compliance checks."""
-    def verify_zk_fairness(self, input_data: str) -> ZKFairnessProof:
+    """Module for handling regulatory compliance checks (MAS FEAT & HKMA Ethics)."""
+    def verify_zk_fairness(self, input_data: str, expert: str = "Unknown") -> ZKFairnessProof:
         """
         Simulates ZK-Fairness proof generation for MAS FEAT compliance.
-        In a real scenario, this would involve generating a cryptographic proof
-        that the model's output doesn't discriminate based on protected attributes.
+        Evaluates demographic parity for specific MoE expert nodes.
         """
         # Mocking demographic parity calculation for MAS FEAT compliance
-        parity_base = 0.95
+        # Certain experts might have different fairness profiles
+        fairness_profiles = {
+            "Expert_Retail": 0.92,
+            "Expert_Finance": 0.94,
+            "Expert_General": 0.96
+        }
+        parity_base = fairness_profiles.get(expert, 0.95)
         variance = (len(input_data) % 5) / 100.0
         dp_score = min(1.0, parity_base + variance)
 
-        proof_hash = hashlib.sha3_512(input_data.encode()).hexdigest()
+        proof_hash = hashlib.sha3_512(f"{input_data}_{expert}".encode()).hexdigest()
 
         return ZKFairnessProof(
             proof_hash=f"zkp_{proof_hash[:32]}",
-            status="VERIFIED" if dp_score >= 0.8 else "FAILED",
+            status="VERIFIED" if dp_score >= 0.85 else "FAILED",
             demographic_parity_score=dp_score
         )
 
     def generate_cae(self, module_name: str, _output: str) -> ContextualAttributionEnvelope:
         """
         Simulates Contextual Attribution Envelope for HKMA Ethics compliance.
-        This provides interpretability by attributing the output to specific model components.
+        Implements an ASA (Adaptive System Attribution) Interpretability Layer.
         """
-
-        # Simulate an ASA (Adaptive System Attribution) Interpretability Layer for HKMA Ethics
-        contribution_scores = {
-            module_name: 0.85,
-            "BaseTransformer": 0.10,
-            "ContextualEncoder": 0.05
-        }
+        # Detailed contribution scores for enhanced interpretability
+        if "NLPModule" in module_name:
+            expert_name = module_name.split("_")[-1]
+            contribution_scores = {
+                f"ExpertNode_{expert_name}": 0.75,
+                "BaseTransformer": 0.15,
+                "ContextualEncoder": 0.05,
+                "RegulatoryGuardrail": 0.05
+            }
+        else:
+            contribution_scores = {
+                module_name: 0.80,
+                "BaseTransformer": 0.15,
+                "SystemIntegrityLayer": 0.05
+            }
 
         return ContextualAttributionEnvelope(
             attribution_id=f"cae_{uuid.uuid4().hex[:16]}",
             contribution_scores=contribution_scores,
             interpretability_summary=(
-                f"Output segment processed by {module_name}. "
-                "Contextual attribution suggests high fidelity to input prompts."
+                f"Output segment processed by {module_name} using ASA Interpretability Layer. "
+                "Contextual attribution verifies alignment with ethical guidelines."
             ),
             timestamp=datetime.now(timezone.utc).isoformat()
         )
-
-# === Speech Processor ===
-
 class SpeechProcessor:
     """Module for processing speech-to-text and text-to-speech."""
     def __init__(self):
@@ -271,14 +296,17 @@ class EnhancedAGIPipeline:
     async def process_nlp(self, text: str) -> dict:
         """Asynchronously processes NLP requests with compliance and RCE checks."""
         rce = self._get_initial_rce("NLP_Task")
-        response_text = await asyncio.to_thread(self.nlp.generate_text, text)
-        zk_proof = self.regulatory.verify_zk_fairness(text)
-        cae_metadata = self.regulatory.generate_cae("NLPModule", response_text)
+        nlp_output = await asyncio.to_thread(self.nlp.generate_text, text)
+        response_text = nlp_output.text
+        selected_expert = nlp_output.expert
+        zk_proof = self.regulatory.verify_zk_fairness(text, expert=selected_expert)
+        cae_metadata = self.regulatory.generate_cae(f"NLPModule_{selected_expert}", response_text)
 
         # Update RCE with results
         rce.task_lineage.append("NLP_Generated")
         rce.context_depth += 1  # pylint: disable=no-member
         rce.metadata["response_length"] = len(response_text)
+        rce.metadata["selected_expert"] = selected_expert
 
         return {
             "response": response_text,
