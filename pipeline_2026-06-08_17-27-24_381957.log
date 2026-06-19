@@ -1,7 +1,0 @@
-2026-06-08 17:27:24.399 | INFO     | main:<module>:32 - Application startup
-2026-06-08 17:27:26.063 | INFO     | main:__init__:79 - NLP model loaded successfully.
-2026-06-08 17:27:26.214 | INFO     | main:__init__:99 - CV model loaded successfully.
-2026-06-08 17:27:32.196 | INFO     | main:__init__:114 - Speech processor initialized successfully.
-2026-06-08 17:27:36.482 | INFO     | main:__init__:114 - Speech processor initialized successfully.
-2026-06-08 17:27:39.051 | INFO     | main:__init__:114 - Speech processor initialized successfully.
-2026-06-08 17:27:40.519 | INFO     | main:__init__:114 - Speech processor initialized successfully.

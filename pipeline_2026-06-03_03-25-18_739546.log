@@ -1,3 +1,0 @@
-2026-06-03 03:25:18.778 | INFO     | main:<module>:23 - Application startup
-2026-06-03 03:25:34.987 | INFO     | main:__init__:56 - NLP model loaded successfully.
-2026-06-03 03:25:35.494 | INFO     | main:__init__:73 - CV model loaded successfully.

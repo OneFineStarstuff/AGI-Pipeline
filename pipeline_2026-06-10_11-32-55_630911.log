@@ -1,5 +1,0 @@
-2026-06-10 11:32:55.643 | INFO     | main:<module>:39 - Application startup
-2026-06-10 11:32:56.982 | INFO     | main:__init__:106 - NLP model loaded successfully.
-2026-06-10 11:32:57.052 | INFO     | main:__init__:134 - CV model loaded successfully.
-2026-06-10 11:33:01.271 | WARNING  | main:__init__:208 - pyttsx3 initialization failed. Text-to-speech will be disabled.
-2026-06-10 11:33:01.272 | INFO     | main:__init__:210 - Speech processor initialized successfully.
