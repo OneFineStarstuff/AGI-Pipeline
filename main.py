@@ -43,6 +43,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dummy-secret-key-for-local-dev-only")
 ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
+
 def create_access_token(data: dict):
     """
     Creates a JWT access token.
@@ -50,6 +51,7 @@ def create_access_token(data: dict):
     to_encode = data.copy()
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
 
 def authenticate_user(token: str = Depends(oauth2_scheme)):
     """
@@ -64,20 +66,24 @@ def authenticate_user(token: str = Depends(oauth2_scheme)):
 
 # === Pydantic Models ===
 
+
 class NLPResponse(BaseModel):
     """Model for NLP Expert responses."""
     text: str
     expert: str
 
+
 class TextRequest(BaseModel):
     """Request model for text-based endpoints."""
     text: str
+
 
 class ZKFairnessProof(BaseModel):
     """Model for Zero-Knowledge Fairness Proofs (MAS FEAT)."""
     proof_hash: str
     status: str
     demographic_parity_score: float
+
 
 class ContextualAttributionEnvelope(BaseModel):
     """Model for Contextual Attribution Envelopes (HKMA Ethics)."""
@@ -86,12 +92,14 @@ class ContextualAttributionEnvelope(BaseModel):
     interpretability_summary: str = "Analysis completed via ASA Interpretability Layer."
     timestamp: str
 
+
 class RecursiveContextEnvelope(BaseModel):
     """Model for Recursive Context Envelopes (EAIP State Management)."""
     task_lineage: List[str]
     context_depth: int
     metadata: dict = {}
     parent_rce: Optional['RecursiveContextEnvelope'] = None
+
 
 class TextResponse(BaseModel):
     """Response model for text-based endpoints."""
@@ -102,8 +110,10 @@ class TextResponse(BaseModel):
 
 # === NLP Module (T5 Transformer) ===
 
+
 class NLPModule:
     """Module for Natural Language Processing using T5 with MoE logic."""
+
     def __init__(self):
         model_name = "google/flan-t5-small"
         self.tokenizer = T5Tokenizer.from_pretrained(model_name)
@@ -114,9 +124,19 @@ class NLPModule:
     def _route_to_expert(self, prompt: str) -> str:
         """Simulates routing logic to select an expert node."""
         lower_prompt = prompt.lower()
-        if any(word in lower_prompt for word in ["buy", "price", "retail", "shop"]):
+        if any(
+            word in lower_prompt for word in [
+                "buy",
+                "price",
+                "retail",
+                "shop"]):
             return "Expert_Retail"
-        if any(word in lower_prompt for word in ["finance", "stock", "investment", "bank"]):
+        if any(
+            word in lower_prompt for word in [
+                "finance",
+                "stock",
+                "investment",
+                "bank"]):
             return "Expert_Finance"
         return "Expert_General"
 
@@ -127,11 +147,14 @@ class NLPModule:
             raise ValueError("Prompt cannot be empty.")
         try:
             selected_expert = self._route_to_expert(prompt)
-            logger.debug(f"Routing to expert: {selected_expert} for prompt: {prompt}")
+            logger.debug(
+                f"Routing to expert: {selected_expert} for prompt: {prompt}")
             inputs = self.tokenizer(prompt, return_tensors="pt").to(device)
             with torch.no_grad():
-                outputs = self.model.generate(inputs["input_ids"], max_length=100)
-            response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+                outputs = self.model.generate(
+                    inputs["input_ids"], max_length=100)
+            response = self.tokenizer.decode(
+                outputs[0], skip_special_tokens=True)
             logger.info(f"Generated response by {selected_expert}: {response}")
             return NLPResponse(text=response, expert=selected_expert)
         except Exception as e:
@@ -142,8 +165,10 @@ class NLPModule:
             ) from e
 # === CV Module (YOLOv8 for Object Detection) ===
 
+
 class CVModule:
     """Module for Computer Vision using YOLOv8."""
+
     def __init__(self):
         self.model = YOLO('yolov8n.pt').to(device)
         logger.info("CV model loaded successfully.")
@@ -167,9 +192,14 @@ class CVModule:
 
 # === Regulatory Module (Compliance: MAS FEAT & HKMA Ethics) ===
 
+
 class RegulatoryModule:
     """Module for handling regulatory compliance checks (MAS FEAT & HKMA Ethics)."""
-    def verify_zk_fairness(self, input_data: str, expert: str = "Unknown") -> ZKFairnessProof:
+
+    def verify_zk_fairness(
+            self,
+            input_data: str,
+            expert: str = "Unknown") -> ZKFairnessProof:
         """
         Simulates ZK-Fairness proof generation for MAS FEAT compliance.
         Evaluates demographic parity for specific MoE expert nodes.
@@ -185,7 +215,8 @@ class RegulatoryModule:
         variance = (len(input_data) % 5) / 100.0
         dp_score = min(1.0, parity_base + variance)
 
-        proof_hash = hashlib.sha3_512(f"{input_data}_{expert}".encode()).hexdigest()
+        proof_hash = hashlib.sha3_512(
+            f"{input_data}_{expert}".encode()).hexdigest()
 
         return ZKFairnessProof(
             proof_hash=f"zkp_{proof_hash[:32]}",
@@ -193,7 +224,10 @@ class RegulatoryModule:
             demographic_parity_score=dp_score
         )
 
-    def generate_cae(self, module_name: str, _output: str) -> ContextualAttributionEnvelope:
+    def generate_cae(
+            self,
+            module_name: str,
+            _output: str) -> ContextualAttributionEnvelope:
         """
         Simulates Contextual Attribution Envelope for HKMA Ethics compliance.
         Implements an ASA (Adaptive System Attribution) Interpretability Layer.
@@ -223,14 +257,18 @@ class RegulatoryModule:
             ),
             timestamp=datetime.now(timezone.utc).isoformat()
         )
+
+
 class SpeechProcessor:
     """Module for processing speech-to-text and text-to-speech."""
+
     def __init__(self):
         self.whisper_model = whisper.load_model("base")
         try:
             self.tts = pyttsx3.init()
         except Exception:
-            logger.warning("pyttsx3 initialization failed. Text-to-speech will be disabled.")
+            logger.warning(
+                "pyttsx3 initialization failed. Text-to-speech will be disabled.")
             self.tts = None
         logger.info("Speech processor initialized successfully.")
 
@@ -278,8 +316,10 @@ class SpeechProcessor:
 
 # === Enhanced AGI Pipeline ===
 
+
 class EnhancedAGIPipeline:
     """Pipeline orchestrator for multimodal AGI tasks."""
+
     def __init__(self):
         self.nlp = NLPModule()
         self.cv = CVModule()
@@ -299,8 +339,10 @@ class EnhancedAGIPipeline:
         nlp_output = await asyncio.to_thread(self.nlp.generate_text, text)
         response_text = nlp_output.text
         selected_expert = nlp_output.expert
-        zk_proof = self.regulatory.verify_zk_fairness(text, expert=selected_expert)
-        cae_metadata = self.regulatory.generate_cae(f"NLPModule_{selected_expert}", response_text)
+        zk_proof = self.regulatory.verify_zk_fairness(
+            text, expert=selected_expert)
+        cae_metadata = self.regulatory.generate_cae(
+            f"NLPModule_{selected_expert}", response_text)
 
         # Update RCE with results
         rce.task_lineage.append("NLP_Generated")
@@ -327,7 +369,8 @@ class EnhancedAGIPipeline:
     async def process_speech_to_text(self, audio_file: UploadFile) -> dict:
         """Asynchronously processes speech-to-text requests with compliance checks."""
         transcription = await asyncio.to_thread(self.speech_processor.speech_to_text, audio_file)
-        cae_metadata = self.regulatory.generate_cae("SpeechProcessor", transcription)
+        cae_metadata = self.regulatory.generate_cae(
+            "SpeechProcessor", transcription)
         return {
             "response": transcription,
             "cae_metadata": cae_metadata
@@ -336,6 +379,7 @@ class EnhancedAGIPipeline:
     async def process_text_to_speech(self, text: str) -> None:
         """Asynchronously processes text-to-speech requests."""
         await asyncio.to_thread(self.speech_processor.text_to_speech, text)
+
 
 # === FastAPI Application ===
 app = FastAPI()
@@ -351,21 +395,26 @@ pipeline = EnhancedAGIPipeline()
 
 # === Graceful Shutdown ===
 
+
 def shutdown_signal_handler(sig, frame):
     """Handles system signals for graceful shutdown."""
     # pylint: disable=unused-argument
     print('Shutting down gracefully...')
     sys.exit(0)
 
+
 signal.signal(signal.SIGINT, shutdown_signal_handler)
 signal.signal(signal.SIGTERM, shutdown_signal_handler)
 
 # === Endpoints ===
+
+
 @app.post("/process-nlp/", response_model=TextResponse,
           dependencies=[Depends(authenticate_user)])
 async def process_nlp(request: TextRequest):
     """Endpoint for generating text responses."""
     return await pipeline.process_nlp(request.text)
+
 
 @app.post("/process-cv-detection/",
           dependencies=[Depends(authenticate_user)])
@@ -373,6 +422,7 @@ async def process_cv_detection(file: UploadFile):
     """Endpoint for object detection in images."""
     image = Image.open(io.BytesIO(await file.read()))
     return await pipeline.process_cv(image)
+
 
 @app.post("/batch-cv-detection/",
           dependencies=[Depends(authenticate_user)])
@@ -382,11 +432,13 @@ async def batch_cv_detection(files: List[UploadFile]):
     responses = await asyncio.gather(*tasks)
     return {"batch_detections": responses}
 
+
 @app.post("/speech-to-text/", response_model=TextResponse,
           dependencies=[Depends(authenticate_user)])
 async def speech_to_text(file: UploadFile):
     """Endpoint for speech-to-text transcription."""
     return await pipeline.process_speech_to_text(file)
+
 
 @app.post("/text-to-speech/", dependencies=[Depends(authenticate_user)])
 async def text_to_speech(request: TextRequest):

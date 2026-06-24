@@ -1,7 +1,8 @@
 import pytest
-from main import EnhancedAGIPipeline, TextResponse
+from main import EnhancedAGIPipeline
 from PIL import Image
 import io
+
 
 @pytest.mark.asyncio
 async def test_pipeline_nlp():
@@ -13,13 +14,15 @@ async def test_pipeline_nlp():
     assert result["zk_proof"].status == "VERIFIED"
     assert "Expert_Retail" in result["cae_metadata"].interpretability_summary
 
+
 @pytest.mark.asyncio
 async def test_pipeline_cv():
     pipeline = EnhancedAGIPipeline()
-    image = Image.new('RGB', (100, 100), color = 'white')
+    image = Image.new('RGB', (100, 100), color='white')
     result = await pipeline.process_cv(image)
     assert "detections" in result
     assert "cae_metadata" in result
+
 
 @pytest.mark.asyncio
 async def test_pipeline_stt():
