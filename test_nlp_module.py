@@ -1,6 +1,7 @@
 import unittest
 from main import NLPModule
 
+
 class TestNLPModule(unittest.TestCase):
     def setUp(self):
         self.nlp = NLPModule()
@@ -20,6 +21,7 @@ class TestNLPModule(unittest.TestCase):
         prompt = "Hello there!"
         result = self.nlp.generate_text(prompt)
         self.assertEqual(result.expert, "Expert_General")
+
 
 if __name__ == '__main__':
     unittest.main()
